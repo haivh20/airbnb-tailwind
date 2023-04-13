@@ -1,10 +1,12 @@
-"use client";
-import React from "react";
+'use client';
+
+import { useCallback, useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+
 import Button from "../Button";
 
-interface IModalProps {
-  isOpen?: boolean | undefined;
+interface ModalProps {
+  isOpen?: boolean;
   onClose: () => void;
   onSubmit: () => void;
   title?: string;
@@ -16,48 +18,50 @@ interface IModalProps {
   secondaryActionLabel?: string;
 }
 
-const Modal: React.FC<IModalProps> = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  title,
-  body,
-  footer,
-  actionLabel,
+const Modal: React.FC<ModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  onSubmit, 
+  title, 
+  body, 
+  actionLabel, 
+  footer, 
   disabled,
   secondaryAction,
-  secondaryActionLabel,
+  secondaryActionLabel
 }) => {
-  const [showModal, setShowModal] = React.useState<boolean | undefined>(isOpen);
-  console.log("showModal", showModal);
+  const [showModal, setShowModal] = useState(isOpen);
 
-  React.useEffect(() => {
-    setShowModal(!isOpen);
+  useEffect(() => {
+    setShowModal(isOpen);
   }, [isOpen]);
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = useCallback(() => {
     if (disabled) {
       return;
     }
+  
     setShowModal(false);
     setTimeout(() => {
       onClose();
-    }, 300);
-  }, [disabled, onClose]);
+    }, 300)
+  }, [onClose, disabled]);
 
-  const handleSubmit = React.useCallback(() => {
+  const handleSubmit = useCallback(() => {
     if (disabled) {
       return;
     }
-    onSubmit();
-  }, [disabled, onSubmit]);
 
-  const handleSecondaryAction = React.useCallback(() => {
+    onSubmit();
+  }, [onSubmit, disabled]);
+
+  const handleSecondaryAction = useCallback(() => {
     if (disabled || !secondaryAction) {
       return;
     }
+
     secondaryAction();
-  }, [disabled, secondaryAction]);
+  }, [secondaryAction, disabled]);
 
   if (!isOpen) {
     return null;
@@ -80,8 +84,7 @@ const Modal: React.FC<IModalProps> = ({
           bg-neutral-800/70
         "
       >
-        <div
-          className="
+        <div className="
           relative 
           w-full
           md:w-4/6
@@ -95,18 +98,14 @@ const Modal: React.FC<IModalProps> = ({
           "
         >
           {/*content*/}
-          <div
-            className={`
+          <div className={`
             translate
             duration-300
             h-full
-         
-          `}
-          >
-            {/* ${showModal ? "translate-y-0" : "translate-y-full"}$
-            {showModal ? "opacity-100" : "opacity-0"} */}
-            <div
-              className="
+            ${showModal ? 'translate-y-0' : 'translate-y-full'}
+            ${showModal ? 'opacity-100' : 'opacity-0'}
+          `}>
+            <div className="
               translate
               h-full
               lg:h-auto
@@ -124,8 +123,7 @@ const Modal: React.FC<IModalProps> = ({
             "
             >
               {/*header*/}
-              <div
-                className="
+              <div className="
                 flex 
                 items-center 
                 p-6
@@ -148,13 +146,17 @@ const Modal: React.FC<IModalProps> = ({
                 >
                   <IoMdClose size={18} />
                 </button>
-                <div className="text-lg font-semibold">{title}</div>
+                <div className="text-lg font-semibold">
+                  {title}
+                </div>
               </div>
               {/*body*/}
-              <div className="relative p-6 flex-auto">{body}</div>
+              <div className="relative p-6 flex-auto">
+                {body}
+              </div>
               {/*footer*/}
               <div className="flex flex-col gap-2 p-6">
-                <div
+                <div 
                   className="
                     flex 
                     flex-row 
@@ -164,17 +166,16 @@ const Modal: React.FC<IModalProps> = ({
                   "
                 >
                   {secondaryAction && secondaryActionLabel && (
-                    <Button
+                    <Button 
+                      disabled={disabled} 
+                      label={secondaryActionLabel} 
+                      onClick={handleSecondaryAction}
                       outline
-                      label={secondaryActionLabel}
-                      disabled={disabled}
-                      onClick={handleSubmit}
-                    />
+                    />  
                   )}
-
-                  <Button
-                    label={actionLabel}
-                    disabled={disabled}
+                  <Button 
+                    disabled={disabled} 
+                    label={actionLabel} 
                     onClick={handleSubmit}
                   />
                 </div>
@@ -186,6 +187,6 @@ const Modal: React.FC<IModalProps> = ({
       </div>
     </>
   );
-};
+}
 
 export default Modal;
